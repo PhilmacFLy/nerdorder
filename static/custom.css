@@ -1,0 +1,25 @@
+.row {
+  margin: 7px 0 0 0;
+}
+
+.input-group-addon {
+  width: 150px;
+}
+
+.btn {
+  width: 150px;
+  margin: 5px 0 0 0;
+}
+
+.logo {
+  width: 75px;
+  height: 75px;
+  float: left;
+  position: relative;
+  top: -20px;
+  margin: 0 10px 0 0;
+}
+
+.form-control {
+  text-align: center;
+}
