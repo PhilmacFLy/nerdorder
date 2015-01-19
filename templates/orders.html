@@ -54,27 +54,30 @@
 					<tr>
     			    	<th>ArtNr</th>
     					<th>Name</th>
+						<th>Eigentümer</th>
     					<th>Preis</th>
 						<th>Stück</th>
+						<th>Gesamtpreis</th>
 					</tr>
 					<tr>
 						<td>MZ-75E250B</td>
 						<td>Samsung 850 Evo</td>
+						<td>PhilmacFLy</td>
 						<td>119,95€</td>
 						<td>1</td>
-						<td><button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+						<td>119,95€</td>
 					</tr>
 					<tr>
-					<td><input type="text" class="form-control" placeholder="ArtNr"></td>
-					<td><input type="text" class="form-control" placeholder="Name"></td>
-					<td><input type="text" class="form-control" placeholder="Preis"></td>
-					<td><input type="text" class="form-control" placeholder="Stück"></td>
-					<td><button class="btn btn-success" type="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></td>
-					</tr>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td>119,95€</td>
 				</table>
 		</div>
 	</div>
-	{{range $index, $element := .Lists}}
+	{{range $index, $element := .Orders}}
 	<div class="col-md-6">	
 		<div class="panel panel-primary">
 			<!-- Default panel contents -->
@@ -84,24 +87,29 @@
     				<tr>
     			    	<th>ArtNr</th>
     					<th>Name</th>
+						<th>Besteller</th>
     					<th>Preis</th>
 						<th>Stück</th>
+						<th>Gesamtpreis</th>
 					</tr>
+
 					{{range $index2, $item := $element.Items}}
 					<tr>
 						<td>{{$item.Artnr}}</td>
 						<td>{{$item.Name}}</td>
+						<td>{{$item.Owner}}</td>
 						<td>{{$item.Preis}}</td>
 						<td>{{$item.Count}}</td>
-						<td><button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+						<td>{{$item.Gesamtpreis}}</td>
 					</tr>
 					{{end}}
 					<tr>
-						<td><input type="text" class="form-control" placeholder="ArtNr"></td>
-						<td><input type="text" class="form-control" placeholder="Name"></td>
-						<td><input type="text" class="form-control" placeholder="Preis"></td>
-						<td><input type="text" class="form-control" placeholder="Stück"></td>
-						<td><button class="btn btn-success" type="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td>{{$element.Total}}</td>
 					</tr>
 
   				</table>

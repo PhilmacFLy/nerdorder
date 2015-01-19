@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 )
 
 type List struct {
@@ -15,6 +16,7 @@ type List struct {
 type Order struct {
 	Name  string
 	Items []OrderItem
+	Total float64
 }
 
 type ListItem struct {
@@ -51,6 +53,29 @@ func (l *List) Load(filename string) error {
 		return err
 	}
 	err = json.Unmarshal(body, &l)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (l *List) AddItem(i ListItem) error {
+	l.Items = append(l.Items, i)
+	err := l.Save()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (l *List) RemoveItem(a string) error {
+	for i, it := range l.Items {
+		if strings.EqualFold(a, it.Artnr) {
+			l.Items = append(l.Items[:i], l.Items[i+1:]...)
+		}
+	}
+
+	err := l.Save()
 	if err != nil {
 		return err
 	}
