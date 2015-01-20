@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
@@ -41,7 +40,7 @@ func (l *List) Save() error {
 	if err != nil {
 		return err
 	}
-	ioutil.WriteFile(l.Name+".json", b, 0644)
+	ioutil.WriteFile("lists/"+l.Owner+"/"+l.Name+".json", b, 0644)
 	if err != nil {
 		return err
 	}
@@ -49,7 +48,6 @@ func (l *List) Save() error {
 }
 
 func (l *List) Load() error {
-	fmt.Println("lists/" + l.Owner + "/" + l.Name + ".json")
 	body, err := ioutil.ReadFile("lists/" + l.Owner + "/" + l.Name + ".json")
 	if err != nil {
 		return err
