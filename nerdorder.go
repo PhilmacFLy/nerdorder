@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"html/template"
 	"log"
 	"net/http"
@@ -122,7 +123,22 @@ func listchangehandler(w http.ResponseWriter, r *http.Request) {
 	case "add":
 		i := ListItem{}
 		i.Name = r.FormValue("name")
+		if i.Name == "" {
+			e := errors.New("Kein Name angegeben")
+			log.Println(e)
+			fronterr = BuildMessage(errormessage, e.Error())
+			http.Redirect(w, r, "/", http.StatusFound)
+			return
+		}
 		i.Artnr = r.FormValue("artnr")
+		if i.Artnr == "" {
+			e := errors.New("Kein Name angegeben")
+			log.Println(e)
+			fronterr = BuildMessage(errormessage, e.Error())
+			http.Redirect(w, r, "/", http.StatusFound)
+			return
+		}
+
 		i.Count, e = strconv.Atoi(r.FormValue("count"))
 		if e != nil {
 			log.Println(e)
