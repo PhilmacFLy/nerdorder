@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"log"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -67,12 +69,29 @@ func (l *List) AddItem(i ListItem) error {
 			return e
 		}
 	}
-
 	l.Items = append(l.Items, i)
 	err := l.Save()
 	if err != nil {
 		return err
 	}
+
+	oi := OrderItem{}
+	o := Order{}
+	o.Name = l.Name
+	oi.Artnr = i.Artnr
+	oi.Count = i.Count
+	oi.Name = i.Name
+	oi.Owner = l.Owner
+	oi.Preis = i.Preis
+	oi.Gesamtpreis = oi.Preis * float64(oi.Count)
+
+	err = o.AddItem(oi)
+
+	if err != nil {
+		l.RemoveItem(i.Artnr)
+		return err
+	}
+
 	return nil
 }
 
@@ -91,19 +110,20 @@ func (l *List) RemoveItem(a string) error {
 }
 
 func (o *Order) Save() error {
+	o.CalcTotal()
 	b, err := json.MarshalIndent(&o, "", "    ")
 	if err != nil {
 		return err
 	}
-	ioutil.WriteFile(o.Name+".json", b, 0644)
+	ioutil.WriteFile("orders/"+o.Name+".json", b, 0644)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *Order) Load(filename string) error {
-	body, err := ioutil.ReadFile(filename)
+func (o *Order) Load() error {
+	body, err := ioutil.ReadFile("orders/" + o.Name + ".json")
 	if err != nil {
 		return err
 	}
@@ -114,20 +134,56 @@ func (o *Order) Load(filename string) error {
 	return nil
 }
 
+func (o *Order) AddItem(oi OrderItem) error {
+	if _, err := os.Stat("orders/" + o.Name + ".json"); os.IsNotExist(err) {
+		o.Items = append(o.Items, oi)
+		return o.Save()
+	}
+	if _, err := os.Stat("orders/" + o.Name + ".json"); err == nil {
+		e := o.Load()
+		if e != nil {
+			log.Println(e)
+			return e
+		}
+		o.Items = append(o.Items, oi)
+		e = o.Save()
+		if e != nil {
+			log.Println(e)
+			return e
+		}
+
+	}
+	return nil
+
+}
+
+func (o *Order) CalcTotal() {
+	for _, oi := range o.Items {
+		o.Total += oi.Gesamtpreis
+	}
+}
 func LoadOrders() ([]Order, error) {
 	var orders []Order
 	files, err := ioutil.ReadDir("orders")
 	if err != nil {
 		return nil, err
 	}
+	ordercount = 0
 	for _, f := range files {
 		if filepath.Ext(f.Name()) == ".json" {
 			o := Order{}
-			err := o.Load("orders/" + f.Name())
+			o.Name = StripExt(f.Name())
+			err := o.Load()
 			if err != nil {
 				return nil, err
 			}
-			orders = append(orders, o)
+			s := Shop{}
+			s.Name = o.Name
+			s.Load()
+			if o.Total >= s.Threshold {
+				orders = append(orders, o)
+				ordercount++
+			}
 		}
 	}
 	return orders, nil

@@ -10,6 +10,7 @@ import (
 
 var fronterr string
 var ordererr string
+var ordercount int
 
 const errormessage = `<div class="alert alert-danger" role="alert">
   <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -18,14 +19,16 @@ const errormessage = `<div class="alert alert-danger" role="alert">
 </div>`
 
 type Frontpage struct {
-	Lists    []List
-	Message  template.HTML
-	Username string
+	Lists      []List
+	Message    template.HTML
+	Username   string
+	Ordercount int
 }
 
 type Orderpage struct {
-	Orders   []Order
-	Username string
+	Orders     []Order
+	Username   string
+	Ordercount int
 }
 
 func statichandler(w http.ResponseWriter, r *http.Request) {
