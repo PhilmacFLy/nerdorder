@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
@@ -60,6 +61,13 @@ func (l *List) Load() error {
 }
 
 func (l *List) AddItem(i ListItem) error {
+	for _, it := range l.Items {
+		if strings.EqualFold(i.Artnr, it.Artnr) {
+			e := errors.New("Item bereits vorhanden")
+			return e
+		}
+	}
+
 	l.Items = append(l.Items, i)
 	err := l.Save()
 	if err != nil {
