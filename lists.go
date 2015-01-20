@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
@@ -47,8 +48,9 @@ func (l *List) Save() error {
 	return nil
 }
 
-func (l *List) Load(filename string) error {
-	body, err := ioutil.ReadFile(filename)
+func (l *List) Load() error {
+	fmt.Println("lists/" + l.Owner + "/" + l.Name + ".json")
+	body, err := ioutil.ReadFile("lists/" + l.Owner + "/" + l.Name + ".json")
 	if err != nil {
 		return err
 	}

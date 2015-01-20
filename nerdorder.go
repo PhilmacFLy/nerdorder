@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"text/template"
@@ -83,10 +84,31 @@ func ordershandler(w http.ResponseWriter, r *http.Request) {
 func loginhandler(w http.ResponseWriter, r *http.Request) {
 }
 
+func listchangehandler(w http.ResponseWriter, r *http.Request) {
+
+	u := User{}
+	u.Username = "PhilmacFLy"
+
+	l := List{}
+	l.Name = r.FormValue("list")
+	l.Owner = u.Username
+
+	err := l.Load()
+
+	if err != nil {
+		log.Println(l)
+		return
+	}
+
+	fmt.Println(l)
+
+}
+
 func main() {
 	serveSingle("/favicon.ico", "static/favicon.ico")
 	http.HandleFunc("/", listshandler)
 	http.HandleFunc("/orders", ordershandler)
+	http.HandleFunc("/list", listchangehandler)
 	http.HandleFunc("/login", loginhandler)
 	http.HandleFunc("/static/", statichandler)
 	http.ListenAndServe(":8080", nil)

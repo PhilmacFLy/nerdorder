@@ -27,7 +27,7 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="">Lists<span class="sr-only">(current)</span></a></li>
+        <li class="active"><a href="/">Lists<span class="sr-only">(current)</span></a></li>
         <li><a href="orders">Orders <span class="badge">42</span></a></li>
         <li class="dropdown">
       </ul>
@@ -82,10 +82,10 @@
 				<!-- Table -->
   				<table class="table">
     				<tr>
-    			    	<th>ArtNr</th>
+    			    <th>ArtNr</th>
     					<th>Name</th>
     					<th>Preis</th>
-						<th>Stück</th>
+							<th>Stück</th>
 					</tr>
 					{{range $index2, $item := $element.Items}}
 					<tr>
@@ -93,15 +93,25 @@
 						<td>{{$item.Name}}</td>
 						<td>{{$item.Preis}}</td>
 						<td>{{$item.Count}}</td>
-						<td><button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+						<td>
+							<form action="list" class="form">
+								<input type="hidden" name="list" value={{$element.Name}} />
+								<input type="hidden" name="action" value="delete" />
+								<button class="btn btn-danger" type="submit"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button>
+							</form>
+						</td>
 					</tr>
 					{{end}}
 					<tr>
-						<td><input type="text" class="form-control" placeholder="ArtNr"></td>
-						<td><input type="text" class="form-control" placeholder="Name"></td>
-						<td><input type="text" class="form-control" placeholder="Preis"></td>
-						<td><input type="text" class="form-control" placeholder="Stück"></td>
-						<td><button class="btn btn-success" type="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></td>
+						<form action="list" class="form">
+							<td><input type="text" class="form-control" name="artnr" placeholder="ArtNr"></td>
+							<td><input type="text" class="form-control" name="name" placeholder="Name"></td>
+							<td><input type="text" class="form-control" name="preis" placeholder="Preis"></td>
+							<td><input type="text" class="form-control" name="count" placeholder="Stück"></td>
+							<td><button class="btn btn-success" type="submit"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></td>
+							<input type="hidden" name="list" value={{$element.Name}} />
+							<input type="hidden" name="action" value="add" />
+						</form>
 					</tr>
 
   				</table>

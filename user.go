@@ -19,7 +19,9 @@ func (u *User) loadLists() ([]List, error) {
 	for _, f := range files {
 		if filepath.Ext(f.Name()) == ".json" {
 			l := List{}
-			err := l.Load("lists/" + u.Username + "/" + f.Name())
+			l.Owner = u.Username
+			l.Name = StripExt(f.Name())
+			err := l.Load()
 			if err != nil {
 				return nil, err
 			}
