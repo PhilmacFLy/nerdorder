@@ -162,6 +162,7 @@ func (o *Order) CalcTotal() {
 		o.Total += oi.Gesamtpreis
 	}
 }
+
 func LoadOrders() ([]Order, error) {
 	var orders []Order
 	files, err := ioutil.ReadDir("orders")
