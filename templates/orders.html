@@ -85,22 +85,22 @@
 				<!-- Table -->
   				<table class="table">
     				<tr>
-    			    	<th>ArtNr</th>
+    			    <th>ArtNr</th>
     					<th>Name</th>
-						<th>Besteller</th>
+							<th>Besteller</th>
     					<th>Preis</th>
-						<th>Stück</th>
-						<th>Gesamtpreis</th>
-					</tr>
+							<th>Stück</th>
+							<th>Gesamtpreis</th>
+						</tr>
 
 					{{range $index2, $item := $element.Items}}
 					<tr>
 						<td>{{$item.Artnr}}</td>
 						<td>{{$item.Name}}</td>
 						<td>{{$item.Owner}}</td>
-						<td>{{$item.Preis}}</td>
+						<td>{{$item.Preis}}€</td>
 						<td>{{$item.Count}}</td>
-						<td>{{$item.Gesamtpreis}}</td>
+						<td>{{$item.Gesamtpreis}}€</td>
 					</tr>
 					{{end}}
 					<tr>
@@ -109,7 +109,7 @@
 						<td></td>
 						<td></td>
 						<td></td>
-						<td>{{$element.Total}}</td>
+						<td>{{$element.Total}}€</td>
 					</tr>
 
   				</table>

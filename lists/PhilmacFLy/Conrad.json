@@ -10,21 +10,9 @@
         },
         {
             "Name": "asdf",
-            "Artnr": "1234",
-            "Count": 3,
-            "Preis": 12
-        },
-        {
-            "Name": "gsfd",
-            "Artnr": "23123",
+            "Artnr": "5123123",
             "Count": 2,
-            "Preis": 54
-        },
-        {
-            "Name": "adfqwe",
-            "Artnr": "12341531235",
-            "Count": 4,
-            "Preis": 3
+            "Preis": 32
         }
     ]
 }

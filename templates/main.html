@@ -92,11 +92,12 @@
 					<tr>
 						<td>{{$item.Artnr}}</td>
 						<td>{{$item.Name}}</td>
-						<td>{{$item.Preis}}</td>
+						<td>{{$item.Preis}}€</td>
 						<td>{{$item.Count}}</td>
 						<td>
 							<form action="list" class="form">
 								<input type="hidden" name="list" value={{$element.Name}} />
+								<input type="hidden" name="artnr" value={{$item.Artnr}} />
 								<input type="hidden" name="action" value="delete" />
 								<button class="btn btn-danger" type="submit"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button>
 							</form>

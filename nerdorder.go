@@ -68,8 +68,12 @@ func listshandler(w http.ResponseWriter, r *http.Request) {
 		fp.Message = template.HTML(fronterr)
 		fronterr = ""
 	}
+	fp.Ordercount = ordercount
 
-	t.Execute(w, &fp)
+	err = t.Execute(w, &fp)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func ordershandler(w http.ResponseWriter, r *http.Request) {
@@ -95,6 +99,7 @@ func ordershandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	op.Username = u.Username
+	op.Ordercount = ordercount
 
 	t.Execute(w, &op)
 }
@@ -158,6 +163,8 @@ func listchangehandler(w http.ResponseWriter, r *http.Request) {
 		}
 		err = l.AddItem(i)
 	case "delete":
+		artnr := r.FormValue("artnr")
+		err = l.RemoveItem(artnr)
 	}
 
 	if err != nil {
