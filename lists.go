@@ -106,6 +106,12 @@ func (l *List) RemoveItem(a string) error {
 	if err != nil {
 		return err
 	}
+
+	o := Order{}
+	o.Name = l.Name
+
+	o.RemoveItem(a)
+
 	return nil
 }
 
@@ -152,6 +158,22 @@ func (o *Order) AddItem(oi OrderItem) error {
 			return e
 		}
 
+	}
+	LoadOrders()
+	return nil
+
+}
+
+func (o *Order) RemoveItem(a string) error {
+	for i, oi := range o.Items {
+		if strings.EqualFold(a, oi.Artnr) {
+			o.Items = append(o.Items[:i], o.Items[i+1:]...)
+		}
+	}
+
+	err := o.Save()
+	if err != nil {
+		return err
 	}
 	return nil
 
