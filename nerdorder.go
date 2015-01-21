@@ -23,6 +23,7 @@ type Frontpage struct {
 	Message    template.HTML
 	Username   string
 	Ordercount int
+	Shops      []Shop
 }
 
 type Orderpage struct {
@@ -54,6 +55,14 @@ func listshandler(w http.ResponseWriter, r *http.Request) {
 	fp.Lists, err = u.loadLists()
 
 	if err != nil {
+		fronterr = BuildMessage(errormessage, err.Error())
+		log.Println(err)
+	}
+
+	fp.Shops, err = LoadShops()
+
+	if err != nil {
+		fronterr = BuildMessage(errormessage, err.Error())
 		log.Println(err)
 	}
 
@@ -64,11 +73,12 @@ func listshandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fp.Username = u.Username
+	fp.Ordercount = ordercount
+
 	if fronterr != "" {
 		fp.Message = template.HTML(fronterr)
 		fronterr = ""
 	}
-	fp.Ordercount = ordercount
 
 	err = t.Execute(w, &fp)
 	if err != nil {
