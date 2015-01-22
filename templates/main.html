@@ -33,11 +33,9 @@
 		<li class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Add New List<span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li><a href="#">Separated link</a></li>
-            <li><a href="#">One more separated link</a></li>
+						{{range $index, $element := .Shops}}
+						<li><a href="/list?action=new&list={{$element.Name}}">{{$element.Name}}</a></li>
+  					{{end}}
           </ul>
         </li>
       </ul>
@@ -60,7 +58,16 @@
 	<div class="col-md-6">	
 		<div class="panel panel-primary">
 			<!-- Default panel contents -->
-  			<div class="panel-heading">Reichelt</div>
+			<div class="panel-heading">
+				<form action="list" class="form-inline">
+					<div class="form-group">
+						Reichelt
+						<button style="margin-left:10px" class="btn btn-danger" type="submit" name="action" value="remove">
+							<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+						</button>
+					</div>
+				</form>
+			</div>
 				<!-- Table -->
   				<table class="table">
 					<tr>
@@ -90,7 +97,17 @@
 	<div class="col-md-6">	
 		<div class="panel panel-primary">
 			<!-- Default panel contents -->
-			<div class="panel-heading">{{$element.Name}}</div>
+			<div class="panel-heading">
+				<form action="list" class="form-inline">
+					<div class="form-group">
+						{{$element.Name}}
+						<button style="margin-left:10px" class="btn btn-danger" type="submit" name="action" value="remove">
+							<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+						</button>
+					</div>
+					<input type="hidden" name="list" value={{$element.Name}} />
+				</form>
+			</div>
 				<!-- Table -->
   				<table class="table">
     				<tr>
@@ -109,8 +126,7 @@
 							<form action="list" class="form">
 								<input type="hidden" name="list" value={{$element.Name}} />
 								<input type="hidden" name="artnr" value={{$item.Artnr}} />
-								<input type="hidden" name="action" value="delete" />
-								<button class="btn btn-danger" type="submit"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button>
+								<button class="btn btn-danger" type="submit" name="action" value="delete"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button>
 							</form>
 						</td>
 					</tr>
@@ -121,9 +137,8 @@
 							<td><input type="text" class="form-control" name="name" placeholder="Name"></td>
 							<td><input type="text" class="form-control" name="preis" placeholder="Preis"></td>
 							<td><input type="text" class="form-control" name="count" placeholder="Stück"></td>
-							<td><button class="btn btn-success" type="submit"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></td>
+							<td><button class="btn btn-success" type="submit" name="action" value="add" ><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></td>
 							<input type="hidden" name="list" value={{$element.Name}} />
-							<input type="hidden" name="action" value="add" />
 						</form>
 					</tr>
 

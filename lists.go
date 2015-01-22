@@ -38,6 +38,23 @@ type OrderItem struct {
 	Owner       string
 }
 
+func (l *List) Create() error {
+	if _, err := os.Stat("lists/" + l.Owner + "/" + l.Name + ".json"); os.IsNotExist(err) {
+		return l.Save()
+	}
+	if _, err := os.Stat("lists/" + l.Owner + "/" + l.Name + ".json"); err == nil {
+		return nil
+	}
+	if _, err := os.Stat("lists/" + l.Owner + "/" + l.Name + ".json"); err != nil {
+		return err
+	}
+	return errors.New("was?")
+}
+
+func (l *List) Delete() error {
+	return os.Remove("lists/" + l.Owner + "/" + l.Name + ".json")
+}
+
 func (l *List) Save() error {
 	b, err := json.MarshalIndent(&l, "", "    ")
 	if err != nil {

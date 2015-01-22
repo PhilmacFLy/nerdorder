@@ -111,7 +111,11 @@ func ordershandler(w http.ResponseWriter, r *http.Request) {
 	op.Username = u.Username
 	op.Ordercount = ordercount
 
-	t.Execute(w, &op)
+	err = t.Execute(w, &op)
+	if err != nil {
+		log.Println(err)
+	}
+
 }
 
 func loginhandler(w http.ResponseWriter, r *http.Request) {
@@ -126,16 +130,18 @@ func listchangehandler(w http.ResponseWriter, r *http.Request) {
 	l.Name = r.FormValue("list")
 	l.Owner = u.Username
 
-	e := l.Load()
-
-	if e != nil {
-		log.Println(l)
-		return
-	}
-
 	a := r.FormValue("action")
 
 	var err error
+
+	if a != "new" {
+		e := l.Load()
+
+		if e != nil {
+			log.Println(e)
+			fronterr = BuildMessage(errormessage, err.Error())
+		}
+	}
 
 	switch a {
 	case "add":
@@ -156,7 +162,7 @@ func listchangehandler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
-
+		var e error
 		i.Count, e = strconv.Atoi(r.FormValue("count"))
 		if e != nil {
 			log.Println(e)
@@ -175,6 +181,10 @@ func listchangehandler(w http.ResponseWriter, r *http.Request) {
 	case "delete":
 		artnr := r.FormValue("artnr")
 		err = l.RemoveItem(artnr)
+	case "new":
+		err = l.Create()
+	case "remove":
+		err = l.Delete()
 	}
 
 	if err != nil {

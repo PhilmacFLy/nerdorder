@@ -1,14 +1,5 @@
 {
     "Name": "Conrad",
-    "Items": [
-        {
-            "Name": "asdf",
-            "Artnr": "5123123",
-            "Count": 2,
-            "Preis": 32,
-            "Gesamtpreis": 64,
-            "Owner": "PhilmacFLy"
-        }
-    ],
-    "Total": 64
+    "Items": null,
+    "Total": 0
 }
