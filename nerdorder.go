@@ -28,6 +28,14 @@ type Frontpage struct {
 
 type Orderpage struct {
 	Orders     []Order
+	Message    template.HTML
+	Username   string
+	Ordercount int
+}
+
+type Shoppage struct {
+	Shops      []Shop
+	Message    template.HTML
 	Username   string
 	Ordercount int
 }
@@ -195,12 +203,48 @@ func listchangehandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func shopshandler(w http.ResponseWriter, r *http.Request) {
+	u := User{}
+
+	u.Username = "PhilmacFLy"
+
+	var err error
+
+	sp := Shoppage{}
+
+	sp.Shops, err = LoadShops()
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	t, err := template.ParseFiles("templates/shops.html")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sp.Username = u.Username
+	sp.Ordercount = ordercount
+
+	err = t.Execute(w, &sp)
+	if err != nil {
+		log.Println(err)
+	}
+
+}
+
+func shopschangehanlder(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func main() {
 	serveSingle("/favicon.ico", "static/favicon.ico")
 	http.HandleFunc("/", listshandler)
 	http.HandleFunc("/orders", ordershandler)
 	http.HandleFunc("/list", listchangehandler)
 	http.HandleFunc("/login", loginhandler)
+	http.HandleFunc("/shops", shopshandler)
 	http.HandleFunc("/static/", statichandler)
 	http.ListenAndServe(":8080", nil)
 

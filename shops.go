@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 )
 
@@ -34,6 +35,10 @@ func (s *Shop) Load() error {
 		return err
 	}
 	return nil
+}
+
+func (s *Shop) Remove() error {
+	return os.Remove("shops/" + s.Name + ".json")
 }
 
 func LoadShops() ([]Shop, error) {
