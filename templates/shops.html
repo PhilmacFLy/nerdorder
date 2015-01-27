@@ -37,7 +37,7 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Settings<span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Shops</a></li>
+            <li><a href="shops">Shops</a></li>
             <li><a href="#">Password</a></li>
 			<li class="divider"></li>
             <li><a href="#">Logout</a></li>
@@ -46,7 +46,7 @@
       </ul>
     </div><!-- /.navbar-collapse -->
 </nav>
-	<div class="col-md-2">	
+	<div class="col-md-3">	
 		<div class="panel panel-primary">
 			<!-- Default panel contents -->
   		<div class="panel-heading">
@@ -74,7 +74,7 @@
 		</div>
 	</div>
 	{{range $index, $element := .Shops}}
-		<div class="col-md-2">	
+		<div class="col-md-3">	
 		<div class="panel panel-primary">
 			<!-- Default panel contents -->
   		<div class="panel-heading">
@@ -102,5 +102,35 @@
 		</div>
 	</div>
 {{end}}
+	<form action="shop" class="form">
+	<div class="col-md-3">	
+		<div class="panel panel-primary">
+			<!-- Default panel contents -->
+  			<div class="panel-heading">
+					<div class="form-group-inline">
+								<input type="text" class="form-control" name="name" placeholder="Name">							
+					</div>
+			</div>
+				<!-- Table -->
+  			<table class="table">
+				<tr>
+    				<th>Threshold</th>
+    				<th>Website</th>
+				</tr>
+				<tr>
+					<td><input type="text" class="form-control" name="thresh" placeholder="Threshold"></td>
+					<td><input type="text" class="form-control" name="website" placeholder="Website"></td>
+				</tr>
+				<tr>	
+					<td>
+						<button style="margin-left:10px" class="btn btn-success" type="submit" name="action" value="add">
+							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+						</button>
+					</td>
+					<td></td>
+			</table>
+		</div>
+	</div>
+	</form>
 </div>
 </body>

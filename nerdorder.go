@@ -119,6 +119,11 @@ func ordershandler(w http.ResponseWriter, r *http.Request) {
 	op.Username = u.Username
 	op.Ordercount = ordercount
 
+	if fronterr != "" {
+		op.Message = template.HTML(fronterr)
+		fronterr = ""
+	}
+
 	err = t.Execute(w, &op)
 	if err != nil {
 		log.Println(err)
@@ -227,6 +232,11 @@ func shopshandler(w http.ResponseWriter, r *http.Request) {
 	sp.Username = u.Username
 	sp.Ordercount = ordercount
 
+	if fronterr != "" {
+		sp.Message = template.HTML(fronterr)
+		fronterr = ""
+	}
+
 	err = t.Execute(w, &sp)
 	if err != nil {
 		log.Println(err)
@@ -235,7 +245,14 @@ func shopshandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func shopschangehanlder(w http.ResponseWriter, r *http.Request) {
+	a := r.FormValue("action")
 
+	switch a {
+	case "delete":
+		s := Shop{}
+		s.Name = r.FormValue("list")
+	case "add":
+	}
 }
 
 func main() {
