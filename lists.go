@@ -127,7 +127,7 @@ func (l *List) RemoveItem(a string) error {
 	o := Order{}
 	o.Name = l.Name
 
-	o.RemoveItem(a)
+	o.RemoveItem(a, l.Owner)
 
 	return nil
 }
@@ -181,10 +181,13 @@ func (o *Order) AddItem(oi OrderItem) error {
 
 }
 
-func (o *Order) RemoveItem(a string) error {
+func (o *Order) RemoveItem(a, ow string) error {
 	for i, oi := range o.Items {
 		if strings.EqualFold(a, oi.Artnr) {
-			o.Items = append(o.Items[:i], o.Items[i+1:]...)
+			if strings.EqualFold(ow, oi.Owner) {
+				o.Items = append(o.Items[:i], o.Items[i+1:]...)
+				return
+			}
 		}
 	}
 
