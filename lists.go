@@ -186,7 +186,7 @@ func (o *Order) RemoveItem(a, ow string) error {
 		if strings.EqualFold(a, oi.Artnr) {
 			if strings.EqualFold(ow, oi.Owner) {
 				o.Items = append(o.Items[:i], o.Items[i+1:]...)
-				return
+				break
 			}
 		}
 	}

@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -38,6 +40,10 @@ type Shoppage struct {
 	Message    template.HTML
 	Username   string
 	Ordercount int
+}
+
+type Loginpage struct {
+	Message template.HTML
 }
 
 func statichandler(w http.ResponseWriter, r *http.Request) {
@@ -131,7 +137,46 @@ func ordershandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func loginprocess(w http.ResponseWriter, r *http.Request) error {
+	u := User{}
+	u.Username = r.FormValue("username")
+	err := u.Load()
+	if err != nil {
+		fmt.Println(err)
+		return errors.New("Username or Password wrong")
+	}
+	h := hashPassword(r.FormValue("password"))
+	if bytes.Compare(u.Password, h) != 0 {
+		return errors.New("Username or Password wrong")
+	}
+	http.Redirect(w, r, "/", http.StatusFound)
+	return nil
+}
+
 func loginhandler(w http.ResponseWriter, r *http.Request) {
+	var err error
+	var loginerror string
+	a := r.FormValue("action")
+	if a == "do" {
+		err = loginprocess(w, r)
+		if err == nil {
+			return
+		} else {
+			loginerror = BuildMessage(errormessage, err.Error())
+		}
+	}
+	t, err := template.ParseFiles("templates/login.html")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	lp := Loginpage{template.HTML(loginerror)}
+
+	err = t.Execute(w, &lp)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func listchangehandler(w http.ResponseWriter, r *http.Request) {
@@ -153,9 +198,10 @@ func listchangehandler(w http.ResponseWriter, r *http.Request) {
 		if e != nil {
 			log.Println(e)
 			fronterr = BuildMessage(errormessage, err.Error())
+			http.Redirect(w, r, "/", http.StatusFound)
+			return
 		}
 	}
-
 	switch a {
 	case "add":
 		i := ListItem{}
@@ -203,6 +249,8 @@ func listchangehandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 		fronterr = BuildMessage(errormessage, err.Error())
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
 	}
 	http.Redirect(w, r, "/", http.StatusFound)
 
@@ -244,14 +292,71 @@ func shopshandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func shopschangehanlder(w http.ResponseWriter, r *http.Request) {
+func shopschangehandler(w http.ResponseWriter, r *http.Request) {
 	a := r.FormValue("action")
-
+	fmt.Println(a)
+	var err error
+	var thresh int
 	switch a {
-	case "delete":
+	case "remove":
 		s := Shop{}
-		s.Name = r.FormValue("list")
+		s.Name = r.FormValue("name")
+		err = s.Remove()
 	case "add":
+		s := Shop{}
+		s.Name = r.FormValue("name")
+		thresh, err = strconv.Atoi(r.FormValue("thresh"))
+		if err != nil {
+			break
+		}
+		s.Threshold = float64(thresh)
+		s.Website = r.FormValue("website")
+		err = s.Save()
+	}
+	if err != nil {
+		fmt.Println(err)
+		fronterr = BuildMessage(errormessage, err.Error())
+	}
+
+	http.Redirect(w, r, "/shops", http.StatusFound)
+}
+
+func registerhandler(w http.ResponseWriter, r *http.Request) {
+	var err error
+	var registererror string
+	a := r.FormValue("action")
+	if a == "do" {
+		err = registerprocess(w, r)
+		if err == nil {
+			return
+		} else {
+			registererror = BuildMessage(errormessage, err.Error())
+		}
+	}
+	t, err := template.ParseFiles("templates/register.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	lp := Loginpage{template.HTML(registererror)}
+
+	err = t.Execute(w, &lp)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func registerprocess(w http.ResponseWriter, r *http.Request) error {
+	u := User{}
+	u.Username = r.FormValue("username")
+	u.Password = hashPassword(r.FormValue("password"))
+	u.Email = r.FormValue("email")
+	err := u.Register()
+	if err != nil {
+		return err
+	} else {
+		http.Redirect(w, r, "/", http.StatusFound)
+		return nil
 	}
 }
 
@@ -262,6 +367,8 @@ func main() {
 	http.HandleFunc("/list", listchangehandler)
 	http.HandleFunc("/login", loginhandler)
 	http.HandleFunc("/shops", shopshandler)
+	http.HandleFunc("/shop", shopschangehandler)
+	http.HandleFunc("/register", registerhandler)
 	http.HandleFunc("/static/", statichandler)
 	http.ListenAndServe(":8080", nil)
 
