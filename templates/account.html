@@ -29,7 +29,7 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li><a href="/">Lists</a></li>
-		<li class="active"><a href="orders">Orders <span class="badge">{{.Ordercount}}</span></a></li>
+				<li><a href="orders">Orders <span class="badge">{{.Ordercount}}</span></a></li>
         <li class="dropdown">
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -46,44 +46,16 @@
       </ul>
     </div><!-- /.navbar-collapse -->
 </nav>
-	{{range $index, $element := .Orders}}
-	<div class="col-md-6">	
-		<div class="panel panel-primary">
-			<!-- Default panel contents -->
-			<div class="panel-heading">{{$element.Name}}</div>
-				<!-- Table -->
-  				<table class="table">
-    				<tr>
-    			    <th>ArtNr</th>
-    					<th>Name</th>
-							<th>Besteller</th>
-    					<th>Preis</th>
-							<th>Stück</th>
-							<th>Gesamtpreis</th>
-						</tr>
-
-					{{range $index2, $item := $element.Items}}
-					<tr>
-						<td>{{$item.Artnr}}</td>
-						<td>{{$item.Name}}</td>
-						<td>{{$item.Owner}}</td>
-						<td>{{$item.Preis}}€</td>
-						<td>{{$item.Count}}</td>
-						<td>{{$item.Gesamtpreis}}€</td>
-					</tr>
-					{{end}}
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td>{{$element.Total}}€</td>
-					</tr>
-
-  				</table>
-		</div>
+	<div class="col-md-3">
+		<form action="shop" class="form">	
+			<h5 class="form-signin-heading">Change your Account details</h5>
+			<label for="inputPassword" class="sr-only">Password</label>
+			<input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" autofocus="">
+			<label for="inputEmail" class="sr-only">Email address</label>
+			<input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" autofocus>
+			<button class="btn btn-lg btn-primary btn-block" type="submit"  name="action" value="change">Change</button>
+			<button class="btn btn-lg btn-danger btn-block" type="submit"  name="action" value="delete">Delete</button>
+		</form>
 	</div>
-	{{end}}
 </div>
 </body>

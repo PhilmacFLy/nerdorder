@@ -42,6 +42,12 @@ type Shoppage struct {
 	Ordercount int
 }
 
+type Accountpage struct {
+	Message    template.HTML
+	Username   string
+	Ordercount int
+}
+
 type Loginpage struct {
 	Message template.HTML
 }
@@ -59,10 +65,13 @@ func serveSingle(pattern string, filename string) {
 func listshandler(w http.ResponseWriter, r *http.Request) {
 
 	u := User{}
-
-	u.Username = "PhilmacFLy"
-
 	var err error
+
+	u.Username, err = GetCookie(r)
+	if err != nil {
+		fmt.Println(err)
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
 
 	fp := Frontpage{}
 
@@ -103,10 +112,13 @@ func listshandler(w http.ResponseWriter, r *http.Request) {
 func ordershandler(w http.ResponseWriter, r *http.Request) {
 
 	u := User{}
-
-	u.Username = "PhilmacFLy"
-
 	var err error
+
+	u.Username, err = GetCookie(r)
+	if err != nil {
+		fmt.Println(err)
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
 
 	op := Orderpage{}
 
@@ -149,6 +161,10 @@ func loginprocess(w http.ResponseWriter, r *http.Request) error {
 	if bytes.Compare(u.Password, h) != 0 {
 		return errors.New("Username or Password wrong")
 	}
+	err = SetCookie(w, u.Username)
+	if err != nil {
+		return errors.New("WAWAWAWAWA Cookies not allowed")
+	}
 	http.Redirect(w, r, "/", http.StatusFound)
 	return nil
 }
@@ -182,15 +198,19 @@ func loginhandler(w http.ResponseWriter, r *http.Request) {
 func listchangehandler(w http.ResponseWriter, r *http.Request) {
 
 	u := User{}
-	u.Username = "PhilmacFLy"
+	var err error
+
+	u.Username, err = GetCookie(r)
+	if err != nil {
+		fmt.Println(err)
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
 
 	l := List{}
 	l.Name = r.FormValue("list")
 	l.Owner = u.Username
 
 	a := r.FormValue("action")
-
-	var err error
 
 	if a != "new" {
 		e := l.Load()
@@ -258,10 +278,13 @@ func listchangehandler(w http.ResponseWriter, r *http.Request) {
 
 func shopshandler(w http.ResponseWriter, r *http.Request) {
 	u := User{}
-
-	u.Username = "PhilmacFLy"
-
 	var err error
+
+	u.Username, err = GetCookie(r)
+	if err != nil {
+		fmt.Println(err)
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
 
 	sp := Shoppage{}
 
@@ -293,9 +316,16 @@ func shopshandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func shopschangehandler(w http.ResponseWriter, r *http.Request) {
+	var err error
+
+	_, err = GetCookie(r)
+	if err != nil {
+		fmt.Println(err)
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
+
 	a := r.FormValue("action")
 	fmt.Println(a)
-	var err error
 	var thresh int
 	switch a {
 	case "remove":
@@ -360,15 +390,77 @@ func registerprocess(w http.ResponseWriter, r *http.Request) error {
 	}
 }
 
+func accountprocess(w http.ResponseWriter, r *http.Request, u User) {
+	a := r.FormValue("action")
+
+	switch a {
+	case "change":
+		u.Password = hashPassword(r.FormValue("password"))
+		u.Email = r.FormValue("email")
+		http.Redirect(w, r, "/", http.StatusFound)
+	case "delete":
+		u.Remove()
+		RemoveCookie(w, r)
+	}
+}
+
+func accounthandler(w http.ResponseWriter, r *http.Request) {
+	u := User{}
+	var err error
+	var accounterror string
+
+	u.Username, err = GetCookie(r)
+	if err != nil {
+		fmt.Println(err)
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
+
+	a := r.FormValue("action")
+	if a == "do" {
+		accountprocess(w, r, u)
+		return
+	}
+
+	op := Orderpage{}
+
+	op.Orders, err = LoadOrders()
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	t, err := template.ParseFiles("templates/account.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ap := Accountpage{}
+	ap.Username = u.Username
+	ap.Ordercount = op.Ordercount
+	ap.Message = template.HTML(accounterror)
+
+	err = t.Execute(w, &ap)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func logoffhandler(w http.ResponseWriter, r *http.Request) {
+	RemoveCookie(w, r)
+	http.Redirect(w, r, "/login", http.StatusFound)
+}
+
 func main() {
 	serveSingle("/favicon.ico", "static/favicon.ico")
 	http.HandleFunc("/", listshandler)
 	http.HandleFunc("/orders", ordershandler)
 	http.HandleFunc("/list", listchangehandler)
 	http.HandleFunc("/login", loginhandler)
+	http.HandleFunc("/logoff", logoffhandler)
 	http.HandleFunc("/shops", shopshandler)
 	http.HandleFunc("/shop", shopschangehandler)
 	http.HandleFunc("/register", registerhandler)
+	http.HandleFunc("/account", accounthandler)
 	http.HandleFunc("/static/", statichandler)
 	http.ListenAndServe(":8080", nil)
 

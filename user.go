@@ -65,3 +65,7 @@ func (u *User) Save() error {
 	}
 	return nil
 }
+
+func (u *User) Remove() error {
+	return os.Remove("users/" + u.Username + ".json")
+}
