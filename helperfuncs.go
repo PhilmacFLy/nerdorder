@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/sha512"
+	"encoding/hex"
 	"html"
 	"net/http"
 	"path/filepath"
@@ -22,9 +23,10 @@ func BuildMessage(template string, message string) string {
 	return strings.Replace(template, "$MESSAGE$", message, -1)
 }
 
-func hashPassword(password string) []byte {
+func hashPassword(password string) string {
 	h512 := sha512.New()
-	return h512.Sum([]byte(password))
+	h512.Write([]byte(password))
+	return hex.EncodeToString(h512.Sum(nil))
 }
 
 func SetCookie(w http.ResponseWriter, u string) error {

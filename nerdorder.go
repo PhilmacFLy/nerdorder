@@ -1,13 +1,13 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 var fronterr string
@@ -157,8 +157,11 @@ func loginprocess(w http.ResponseWriter, r *http.Request) error {
 		fmt.Println(err)
 		return errors.New("Username or Password wrong")
 	}
+	fmt.Println(r.FormValue("password"))
 	h := hashPassword(r.FormValue("password"))
-	if bytes.Compare(u.Password, h) != 0 {
+	fmt.Println(h)
+	fmt.Println(u.Password)
+	if strings.Compare(u.Password, h) != 0 {
 		return errors.New("Username or Password wrong")
 	}
 	err = SetCookie(w, u.Username)

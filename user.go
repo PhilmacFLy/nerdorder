@@ -10,7 +10,7 @@ import (
 
 type User struct {
 	Username string
-	Password []byte
+	Password string
 	Email    string
 }
 
